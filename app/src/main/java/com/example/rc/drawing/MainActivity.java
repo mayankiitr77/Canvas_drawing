@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -102,6 +103,10 @@ public class MainActivity extends Activity {
             float dy = Math.abs(y - mY);
             if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
                 mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+
+            Log.d("mX & mY: ", mX+"&"+mY);
+                Log.d("x & y: ", x+"&"+y);
+
                 mX = x;
                 mY = y;
 
