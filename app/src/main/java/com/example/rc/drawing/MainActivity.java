@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
 
         private float mX, mY, botX, botY;
         private static final float TOUCH_TOLERANCE = 4;
-        private final float length_box=10, height_box=10;
+        private final float length_box=30, height_box=30;
         private String msg="";
 
         private void touch_start(float x, float y) {
@@ -120,7 +120,7 @@ public class MainActivity extends Activity {
             }
 
             float bot_dx = x-botX;
-            float bot_dy = y-botY;
+            float bot_dy = botY-y;
 
             if (Math.abs(bot_dx) >= length_box && Math.abs(bot_dy) < height_box) {
 
@@ -192,6 +192,13 @@ public class MainActivity extends Activity {
                     }
                 }
             }
+            else if (Math.abs(bot_dy) >= height_box && Math.abs(bot_dx) >= length_box){
+                if(bot_dy>0 && bot_dx>0) msg = msg + " 2";
+                if(bot_dy>0 && bot_dx<0) msg = msg + " 8";
+                if(bot_dy<0 && bot_dx>0) msg = msg + " 4";
+                if(bot_dy<0 && bot_dx<0) msg = msg + " 6";
+            }
+
         }
         private void touch_up() {
             mPath.lineTo(mX, mY);
@@ -200,6 +207,7 @@ public class MainActivity extends Activity {
             mCanvas.drawPath(mPath,  mPaint);
             // kill this so we don't double draw
             mPath.reset();
+           // mCanvas.drawColor(Color.BLACK);
         }
 
         @Override
@@ -221,8 +229,8 @@ public class MainActivity extends Activity {
                 case MotionEvent.ACTION_UP:
                     touch_up();
                     invalidate();
-                   // Toast.makeText(MainActivity.this, count+"", Toast.LENGTH_LONG);
-                    Log.i("Action_UP ",count+"");
+                    Log.i("Action_UP ", count + "");
+                    Log.i("Message ",msg);
                     count=0;
                     break;
             }
