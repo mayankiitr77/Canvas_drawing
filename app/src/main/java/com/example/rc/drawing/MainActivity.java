@@ -1,6 +1,5 @@
 package com.example.rc.drawing;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -15,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
         Context context;
         private Paint circlePaint;
         private Path circlePath;
+        int count=0;
 
         public DrawingView(Context c) {
             super(c);
@@ -85,27 +86,31 @@ public class MainActivity extends Activity {
             canvas.drawPath( circlePath,  circlePaint);
         }
 
-        private float mX, mY, currentX, currentY;
+        private float mX, mY, botX, botY;
         private static final float TOUCH_TOLERANCE = 4;
         private final float length_box=10, height_box=10;
         private String msg="";
 
         private void touch_start(float x, float y) {
             msg="";
-            mCanvas.drawColor(Color.BLACK);
+            mCanvas.drawColor(Color.YELLOW);
             mPath.reset();
             mPath.moveTo(x, y);
             mX = x;
             mY = y;
+            botX=x;
+            botY=y;
+
         }
         private void touch_move(float x, float y) {
             float dx = Math.abs(x - mX);
             float dy = Math.abs(y - mY);
-            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
 
-            Log.d("mX & mY: ", mX+"&"+mY);
-                Log.d("x & y: ", x+"&"+y);
+            if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+
+                Log.d("mX & mY: ", mX + "&" + mY);
+                Log.d("x & y: ", x + "&" + y);
 
                 mX = x;
                 mY = y;
@@ -114,6 +119,79 @@ public class MainActivity extends Activity {
                 circlePath.addCircle(mX, mY, 30, Path.Direction.CW);
             }
 
+            float bot_dx = x-botX;
+            float bot_dy = y-botY;
+
+            if (Math.abs(bot_dx) >= length_box && Math.abs(bot_dy) < height_box) {
+
+
+                if(bot_dx>0) {
+                if (Math.abs(bot_dy) >= height_box / 2) {
+                    if (bot_dy > 0) {
+                        msg = msg + " 2";
+                    botX=x;  botY=y;
+                    }
+                    else {
+                        msg = msg + " 4";
+                        botX=x;  botY=y;
+                    }
+                } else {
+                    msg = msg + " 3";
+                    botX=x;
+                }
+                }
+                else {
+                    if (Math.abs(bot_dy) >= height_box / 2) {
+                        if (bot_dy > 0) {
+                            msg = msg + " 8";
+                            botX=x;  botY=y;
+                        }
+                        else {
+                            msg = msg + " 6";
+                            botX=x;  botY=y;
+                        }
+                    } else {
+                        msg = msg + " 7";
+                        botX=x;
+                    }
+
+                }
+            }
+
+            else if (Math.abs(bot_dy) >= height_box && Math.abs(bot_dx) < length_box ) {
+
+                botY = y;
+                if (bot_dy > 0) {
+                    if (Math.abs(bot_dx) >= length_box / 2) {
+                        if (bot_dx > 0) {
+                            msg = msg + " 2";
+                            botX=x;  botY=y;
+                        }
+                        else {
+                            msg = msg + " 8";
+                            botX=x;  botY=y;
+                        }
+                    } else {
+                        msg = msg + " 1";
+                      botY=y;
+                    }
+                }
+                else {
+                    if (Math.abs(bot_dx) >= length_box / 2) {
+                        if (bot_dx > 0) {
+                            msg = msg + " 4";
+                            botX=x;  botY=y;
+                        }
+                        else {
+                            msg = msg + " 6";
+                            botX=x;  botY=y;
+                        }
+                    } else {
+                        msg = msg + " 5";
+                          botY=y;
+                    }
+                }
+            }
         }
         private void touch_up() {
             mPath.lineTo(mX, mY);
@@ -128,6 +206,7 @@ public class MainActivity extends Activity {
         public boolean onTouchEvent(MotionEvent event) {
             float x = event.getX();
             float y = event.getY();
+            //count++;
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -135,16 +214,19 @@ public class MainActivity extends Activity {
                     invalidate();
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    count++;
                     touch_move(x, y);
                     invalidate();
                     break;
                 case MotionEvent.ACTION_UP:
                     touch_up();
                     invalidate();
+                   // Toast.makeText(MainActivity.this, count+"", Toast.LENGTH_LONG);
+                    Log.i("Action_UP ",count+"");
+                    count=0;
                     break;
             }
             return true;
         }
     }
 }
-
